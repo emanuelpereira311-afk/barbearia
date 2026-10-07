@@ -103,9 +103,23 @@ async function sendWhatsAppMessage(phone, message) {
       signal: controller.signal
     });
     const raw = await response.text();
-    let body = {};
-    try { body = raw ? JSON.parse(raw) : {}; } catch { body = {}; }
-    if (!response.ok) throw new Error(`Evolution API respondeu HTTP ${response.status}.`);
+
+console.log("=== EVOLUTION API ===");
+console.log("HTTP:", response.status);
+console.log("Resposta:", raw);
+
+let body = {};
+try {
+  body = raw ? JSON.parse(raw) : {};
+} catch {
+  body = {};
+}
+
+if (!response.ok) {
+  throw new Error(
+    `Evolution API respondeu HTTP ${response.status}: ${raw || "sem detalhes"}`
+  );
+}
     return {
       providerMessageId: body?.key?.id || null,
       providerStatus: body?.status || "accepted"
